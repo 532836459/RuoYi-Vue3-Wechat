@@ -67,10 +67,10 @@
 
     <el-table v-loading="loading" :data="detailList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="id" align="center" prop="id" />
-      <el-table-column label="抓取url" align="center" prop="url" />
+      <el-table-column label="id" align="center" prop="id" width="55"/>
+      <el-table-column label="抓取url" align="center" prop="url" width="250" />
       <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column label="内容" align="center" prop="content" />
+      <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip/>
       <el-table-column label="网盘链接" align="center" prop="downUrl" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -251,3 +251,4 @@ function handleExport() {
 
 getList();
 </script>
+
