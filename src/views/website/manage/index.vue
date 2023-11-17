@@ -146,7 +146,7 @@
           <el-col :span="1"></el-col>
           <el-col :span="1">
             <el-tooltip content="需要填写完域名和正确的同步密码才能获取成功" placement="top" >
-              <el-button round type="primary">点击获取分类</el-button>
+              <el-button round type="primary" @click="getCategory">点击获取分类</el-button>
             </el-tooltip>
           </el-col>
         </el-row>
@@ -232,6 +232,13 @@ const data = reactive({
 });
 
 const { queryParams, form, rules } = toRefs(data);
+
+/**
+ * 获取wordpress分类
+ */
+function getCategory() {
+  console.log(form.value.url);
+}
 
 /** 查询站点管理列表 */
 function getList() {
