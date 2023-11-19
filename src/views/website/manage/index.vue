@@ -139,8 +139,16 @@
           </el-col>
           <el-col :span="1"></el-col>
           <el-col :span="9">
-            <el-form-item label="分类名称" prop="categoryName">
-              <el-select placeholder="请选择分类名称" />
+            <el-form-item label="分类名称" prop="categoryId">
+              <el-select placeholder="请选择分类名称" v-model="form.categoryId"
+                         @change="changeWordpressCategory">
+                <el-option
+                    v-for="item in wordpressCategory"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="1"></el-col>
@@ -201,7 +209,7 @@
 </template>
 
 <script setup name="Manage">
-import { listManage, getManage, delManage, addManage, updateManage } from "@/api/website/manage";
+import {listManage, getManage, delManage, addManage, updateManage, getWordpressCategory} from "@/api/website/manage";
 
 const { proxy } = getCurrentInstance();
 const {nana_common_status, nana_auto_sync} = proxy.useDict('nana_common_status', 'nana_auto_sync');
@@ -215,6 +223,7 @@ const single = ref(true);
 const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
+const wordpressCategory = ref([]);
 
 const data = reactive({
   form: {},
@@ -237,7 +246,19 @@ const { queryParams, form, rules } = toRefs(data);
  * 获取wordpress分类
  */
 function getCategory() {
-  console.log(form.value.url);
+  getWordpressCategory(form.value).then(response =>{
+    proxy.$modal.msgSuccess("获取分类成功");
+    wordpressCategory.value = response.data;
+  })
+}
+
+function changeWordpressCategory(event) {
+  for (let i in wordpressCategory.value) {
+    if (wordpressCategory.value[i].id == event) {
+      form.value.categoryName = wordpressCategory.value[i].name;
+      break;
+    }
+  }
 }
 
 /** 查询站点管理列表 */
@@ -275,6 +296,7 @@ function reset() {
     expireTime: null,
     autoSync: null
   };
+  wordpressCategory.value = null;
   proxy.resetForm("manageRef");
 }
 
@@ -315,6 +337,10 @@ function handleUpdate(row) {
   getManage(_id).then(response => {
     form.value = response.data;
     open.value = true;
+    wordpressCategory.value = [{
+      'id': form.value.categoryId,
+      'name': form.value.categoryName,
+    }];
     title.value = "修改站点管理";
   });
 }

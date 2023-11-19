@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+export function getWordpressCategory(query){
+  return request({
+    url: '/website/manage/getWordpressCategory',
+    method: 'get',
+    params: query
+  })
+}
+
 // 查询站点管理列表
 export function listManage(query) {
   return request({
