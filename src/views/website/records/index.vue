@@ -4,15 +4,7 @@
       <el-form-item label="所属站点" prop="websiteId">
         <el-input
           v-model="queryParams.websiteId"
-          placeholder="请输入站点表id"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="爬虫表id" prop="spiderId">
-        <el-input
-          v-model="queryParams.spiderId"
-          placeholder="请输入爬虫表id"
+          placeholder="请选择"
           clearable
           @keyup.enter="handleQuery"
         />
@@ -27,14 +19,6 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="用户表id" prop="userId">
-        <el-input
-          v-model="queryParams.userId"
-          placeholder="请输入用户表id"
-          clearable
-          @keyup.enter="handleQuery"
-        />
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
@@ -44,22 +28,12 @@
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
         <el-button
-          type="primary"
-          plain
-          icon="Plus"
-          @click="handleAdd"
-          v-hasPermi="['website:records:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="Edit"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['website:records:edit']"
-        >修改</el-button>
+            type="primary"
+            plain
+            icon="Refresh"
+            :disabled="multiple"
+            @click="handleSync"
+        >同步</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -102,7 +76,7 @@
       </el-table-column>
         <el-table-column label="更新时间" align="center" width="95" prop="updateTime">
           <template #default="scope">
-            <span>{{ parseTime(scope.row.createTime) }}</span>
+            <span>{{ parseTime(scope.row.updateTime) }}</span>
           </template>
         </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="150">
@@ -121,35 +95,35 @@
       @pagination="getList"
     />
 
-    <!-- 添加或修改同步管理对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="recordsRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="站点表id" prop="websiteId">
-          <el-input v-model="form.websiteId" placeholder="请输入站点表id" />
-        </el-form-item>
-        <el-form-item label="爬虫表id" prop="spiderId">
-          <el-input v-model="form.spiderId" placeholder="请输入爬虫表id" />
-        </el-form-item>
-        <el-form-item label="同步状态【0：未同步  1：同步成功 2：同步失败】" prop="syncStatus">
-          <el-radio-group v-model="form.syncStatus">
-            <el-radio
-              v-for="dict in sync_status"
-              :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="用户表id" prop="userId">
-          <el-input v-model="form.userId" placeholder="请输入用户表id" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+<!--    &lt;!&ndash; 添加或修改同步管理对话框 &ndash;&gt;-->
+<!--    <el-dialog :title="title" v-model="open" width="500px" append-to-body>-->
+<!--      <el-form ref="recordsRef" :model="form" :rules="rules" label-width="80px">-->
+<!--        <el-form-item label="站点表id" prop="websiteId">-->
+<!--          <el-input v-model="form.websiteId" placeholder="请输入站点表id" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="爬虫表id" prop="spiderId">-->
+<!--          <el-input v-model="form.spiderId" placeholder="请输入爬虫表id" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="同步状态【0：未同步  1：同步成功 2：同步失败】" prop="syncStatus">-->
+<!--          <el-radio-group v-model="form.syncStatus">-->
+<!--            <el-radio-->
+<!--              v-for="dict in sync_status"-->
+<!--              :key="dict.value"-->
+<!--              :label="parseInt(dict.value)"-->
+<!--            >{{dict.label}}</el-radio>-->
+<!--          </el-radio-group>-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="用户表id" prop="userId">-->
+<!--          <el-input v-model="form.userId" placeholder="请输入用户表id" />-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+<!--      <template #footer>-->
+<!--        <div class="dialog-footer">-->
+<!--          <el-button type="primary" @click="submitForm">确 定</el-button>-->
+<!--          <el-button @click="cancel">取 消</el-button>-->
+<!--        </div>-->
+<!--      </template>-->
+<!--    </el-dialog>-->
 
     <!-- 查看详情对话框 -->
     <el-dialog :title="title" v-model="showDetail" width="850px" append-to-body>
@@ -183,7 +157,7 @@
 </template>
 
 <script setup name="Records">
-import { listRecords, getRecords, delRecords, addRecords, updateRecords } from "@/api/website/records";
+import {listRecords, getRecords, delRecords, addRecords, updateRecords, sync} from "@/api/website/records";
 
 const { proxy } = getCurrentInstance();
 const { sync_status } = proxy.useDict('sync_status');
@@ -342,7 +316,14 @@ function getSpiderDetail(row) {
 }
 
 function handleSync(row){
-
+  const _ids = row.id || ids.value;
+  proxy.$modal.confirm('是否确认同步管理编号为"' + _ids + '"的数据项？').then(function() {
+    return sync(_ids);
+  }).then(response => {
+    console.log(response);
+    getList();
+    proxy.$modal.msgSuccess("同步成功");
+  }).catch(() => {});
 }
 
 getList();

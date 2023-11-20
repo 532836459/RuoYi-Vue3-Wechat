@@ -42,3 +42,11 @@ export function delRecords(id) {
     method: 'delete'
   })
 }
+
+// 批量同步
+export function sync(id) {
+  return request({
+    url: '/website/records/sync/' + id,
+    method: 'get'
+  })
+}
