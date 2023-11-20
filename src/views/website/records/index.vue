@@ -112,7 +112,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -207,7 +207,9 @@ const data = reactive({
     websiteId: null,
     spiderId: null,
     syncStatus: null,
-    userId: null
+    userId: null,
+    orderByColumn: 'createTime',
+    isAsc: 'desc'
   },
   rules: {
   }

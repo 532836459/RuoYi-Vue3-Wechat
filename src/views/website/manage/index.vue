@@ -90,11 +90,6 @@
           <dict-tag :options="nana_common_status" :value="scope.row.commonStatus"/>
         </template>
       </el-table-column>
-<!--      <el-table-column label="过期时间" align="center" prop="expireTime" width="180">-->
-<!--        <template #default="scope">-->
-<!--          <span>{{ parseTime(scope.row.expireTime, '{y}-{m}-{d}') }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="自动同步" align="center" prop="autoSync" width="100">
         <template #default="scope">
           <dict-tag :options="nana_auto_sync" :value="scope.row.autoSync"/>
@@ -234,7 +229,9 @@ const data = reactive({
     commonStatus: null,
     userId: null,
     expireTime: null,
-    autoSync: null
+    autoSync: null,
+    orderByColumn: 'createTime',
+    isAsc: 'desc'
   },
   rules: {
   }

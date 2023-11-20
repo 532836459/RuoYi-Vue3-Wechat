@@ -72,6 +72,11 @@
       <el-table-column label="标题" align="center" prop="title" />
       <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip/>
       <el-table-column label="网盘链接" align="center" prop="downUrl" />
+      <el-table-column label="抓取时间" align="center" width="95" prop="createTime">
+        <template #default="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['spider:detail:edit']">修改</el-button>
@@ -79,7 +84,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -136,6 +141,8 @@ const data = reactive({
     pageSize: 10,
     url: null,
     title: null,
+    orderByColumn: 'createTime',
+    isAsc: 'desc'
   },
   rules: {
   }
