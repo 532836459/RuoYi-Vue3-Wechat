@@ -148,13 +148,13 @@
           </el-col>
           <el-col :span="1"></el-col>
           <el-col :span="1">
-            <el-tooltip content="需要填写完域名和正确的同步密码才能获取成功" placement="top" >
+            <el-tooltip content="需要填写完域名才能获取成功" placement="top" >
               <el-button round type="primary" @click="getCategory">点击获取分类</el-button>
             </el-tooltip>
           </el-col>
         </el-row>
         <el-form-item label="文章内容末尾拼接">
-          <editor v-model="form.appendContent" :min-height="192"/>
+          <el-input v-model="form.appendContent" type="textarea" :rows="5" />
         </el-form-item>
         <el-row>
           <el-col :span="12">
@@ -219,6 +219,9 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const wordpressCategory = ref([]);
+const defaultAppend = "<p style=\"text-align: center;\"><span style=\"color: #ff0000;\"><strong>详细教程和视频内容请看下方隐藏内容</strong></span></p>\n" +
+    "<p style=\"text-align: center;\"><strong>会员全站资源免费获取，<span style=\"text-decoration: underline; color: #0000ff;\"><a style=\"color: #0000ff; text-decoration: underline;\" href=\"https://www.nanaxm.cn/598.html\">点击查看会员权益</a></span></strong></p>\n" +
+    "<p style=\"text-align: center;\"><strong>普通用户可在下方单独购买课程！</strong></p>";
 
 const data = reactive({
   form: {},
@@ -234,6 +237,12 @@ const data = reactive({
     isAsc: 'desc'
   },
   rules: {
+    url: [{ required: true, message: "域名不能为空", trigger: "blur" }],
+    title: [{ required: true, message: "网站名称不能为空", trigger: "blur" }],
+    password: [{ required: true, message: "同步密码不能为空", trigger: "blur" }],
+    categoryId: [{ required: true, message: "所属分类不能为空", trigger: "blur" }],
+    price: [{ required: true, message: "项目单价不能为空", trigger: "blur" }],
+    vipPrice: [{ required: true, message: "VIP折扣不能为空", trigger: "blur" }],
   }
 });
 
@@ -243,10 +252,14 @@ const { queryParams, form, rules } = toRefs(data);
  * 获取wordpress分类
  */
 function getCategory() {
+  if (form.value.url == null || form.value.url.trim() == '') {
+    proxy.$modal.msgWarning("请先输入域名");
+    return;
+  }
   getWordpressCategory(form.value).then(response =>{
     proxy.$modal.msgSuccess("获取分类成功");
     wordpressCategory.value = response.data;
-  })
+  });
 }
 
 function changeWordpressCategory(event) {
@@ -321,6 +334,7 @@ function handleAdd() {
   reset();
   open.value = true;
   title.value = "添加站点管理";
+  form.value.appendContent = defaultAppend;
   form.value.commonStatus = "1";
   form.value.autoSync = "1";
   form.value.price = "9.8";
