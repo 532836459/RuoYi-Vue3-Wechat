@@ -252,7 +252,7 @@ const { queryParams, form, rules } = toRefs(data);
  * 获取wordpress分类
  */
 function getCategory() {
-  if (form.value.url == null || form.value.url.trim() == '') {
+  if (form.value.url == null || form.value.url.trim() === '') {
     proxy.$modal.msgWarning("请先输入域名");
     return;
   }
