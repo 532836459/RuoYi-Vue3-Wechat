@@ -220,7 +220,7 @@ const total = ref(0);
 const title = ref("");
 const wordpressCategory = ref([]);
 const defaultAppend = "<p style=\"text-align: center;\"><span style=\"color: #ff0000;\"><strong>详细教程和视频内容请看下方隐藏内容</strong></span></p>\n" +
-    "<p style=\"text-align: center;\"><strong>会员全站资源免费获取，<span style=\"text-decoration: underline; color: #0000ff;\"><a style=\"color: #0000ff; text-decoration: underline;\" href=\"https://www.nanaxm.cn/598.html\">点击查看会员权益</a></span></strong></p>\n" +
+    "<p style=\"text-align: center;\"><strong>会员全站资源免费获取，<span style=\"text-decoration: underline; color: #0000ff;\"><a style=\"color: #0000ff; text-decoration: underline;\" href=\"/598.html\">点击查看会员权益</a></span></strong></p>\n" +
     "<p style=\"text-align: center;\"><strong>普通用户可在下方单独购买课程！</strong></p>";
 
 const data = reactive({
