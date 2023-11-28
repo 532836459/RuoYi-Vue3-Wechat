@@ -81,7 +81,7 @@
       <el-table-column label="抓取url" align="center" prop="url" />
       <el-table-column label="标题" align="center" prop="title" />
       <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip />
-      <el-table-column label="百度网盘链接" align="center" prop="downUrl" />
+      <el-table-column label="百度网盘链接" align="center" prop="downUrl" show-overflow-tooltip />
       <el-table-column label="同步状态" align="center" prop="syncStatus">
         <template #default="scope">
           <dict-tag :options="sync_status" :value="scope.row.syncStatus"/>
@@ -95,11 +95,12 @@
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['spider:spiderSource:edit']">修改</el-button>
+          <el-button link type="primary" icon="Refresh" @click="handleSync(scope.row)" v-hasPermi="['spider:spiderSource:edit']">同步</el-button>
           <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['spider:spiderSource:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -109,16 +110,16 @@
     />
 
     <!-- 添加或修改中创采集对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
+    <el-dialog :title="title" v-model="open" width="610px" append-to-body>
       <el-form ref="spiderSourceRef" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题" />
         </el-form-item>
         <el-form-item label="网盘链接" prop="downUrl">
-          <el-input v-model="form.downUrl" placeholder="请输入百度网盘链接" />
+          <el-input v-model="form.downUrl" placeholder="请输入百度网盘链接" type="textarea" :rows="3" />
         </el-form-item>
         <el-form-item label="内容">
-          <editor v-model="form.content" :min-height="192"/>
+          <editor v-model="form.content" :min-height="192" :height="250"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -132,7 +133,7 @@
 </template>
 
 <script setup name="SpiderSource">
-import { listSpiderSource, getSpiderSource, delSpiderSource, addSpiderSource, updateSpiderSource } from "@/api/spider/spiderSource";
+import { listSpiderSource, getSpiderSource, delSpiderSource, addSpiderSource, updateSpiderSource,syncSpiderSource } from "@/api/spider/spiderSource";
 
 const { proxy } = getCurrentInstance();
 const { sync_status } = proxy.useDict('sync_status');
@@ -263,6 +264,17 @@ function handleDelete(row) {
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("删除成功");
+  }).catch(() => {});
+}
+
+/** 同步按钮操作 */
+function handleSync(row) {
+  const _ids = row.id || ids.value;
+  proxy.$modal.confirm('是否确认同步中创采集编号为"' + _ids + '"的数据项？').then(function() {
+    return syncSpiderSource(_ids);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("同步成功");
   }).catch(() => {});
 }
 

@@ -42,3 +42,10 @@ export function delSpiderSource(id) {
     method: 'delete'
   })
 }
+// 同步中创采集
+export function syncSpiderSource(id) {
+  return request({
+    url: '/spider/spiderSource/sendSync/' + id,
+    method: 'get'
+  })
+}
