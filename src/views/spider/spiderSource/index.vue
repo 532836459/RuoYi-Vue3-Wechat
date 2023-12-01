@@ -81,6 +81,11 @@
       <el-table-column label="抓取url" align="center" prop="url" />
       <el-table-column label="标题" align="center" prop="title" />
       <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip />
+      <el-table-column label="所属分类" align="center" prop="category">
+        <template #default="scope">
+          <dict-tag :options="nana_category" :value="scope.row.category ? scope.row.category.split(',') : []"/>
+        </template>
+      </el-table-column>
       <el-table-column label="百度网盘链接" align="center" prop="downUrl" show-overflow-tooltip />
       <el-table-column label="同步状态" align="center" prop="syncStatus">
         <template #default="scope">
@@ -118,6 +123,16 @@
         <el-form-item label="网盘链接" prop="downUrl">
           <el-input v-model="form.downUrl" placeholder="请输入百度网盘链接" type="textarea" :rows="3" />
         </el-form-item>
+        <el-form-item label="所属分类" prop="category">
+          <el-checkbox-group v-model="form.category">
+            <el-checkbox
+                v-for="dict in nana_category"
+                :key="dict.value"
+                :label="dict.value">
+              {{dict.label}}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
         <el-form-item label="内容">
           <editor v-model="form.content" :min-height="192" :height="250"/>
         </el-form-item>
@@ -136,7 +151,7 @@
 import { listSpiderSource, getSpiderSource, delSpiderSource, addSpiderSource, updateSpiderSource,syncSpiderSource } from "@/api/spider/spiderSource";
 
 const { proxy } = getCurrentInstance();
-const { sync_status } = proxy.useDict('sync_status');
+const { sync_status, nana_category } = proxy.useDict('sync_status', 'nana_category');
 
 const spiderSourceList = ref([]);
 const open = ref(false);
@@ -155,10 +170,12 @@ const data = reactive({
     pageSize: 10,
     url: null,
     title: null,
+    category: null,
     content: null,
     downUrl: null,
     syncStatus: null,
-    createTime: null,
+    orderByColumn: 'createTime',
+    isAsc: 'desc'
   },
   rules: {
   }
@@ -189,6 +206,7 @@ function reset() {
     url: null,
     title: null,
     content: null,
+    category: [],
     downUrl: null,
     imageAddr: null,
     syncStatus: null,
@@ -230,6 +248,7 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getSpiderSource(_id).then(response => {
     form.value = response.data;
+    form.value.category = form.value.category.split(",");
     open.value = true;
     title.value = "修改中创采集";
   });
@@ -239,6 +258,8 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["spiderSourceRef"].validate(valid => {
     if (valid) {
+      console.log(form.value.category);
+      form.value.category = form.value.category.join(",");
       if (form.value.id != null) {
         updateSpiderSource(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
