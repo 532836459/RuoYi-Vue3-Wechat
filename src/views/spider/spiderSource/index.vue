@@ -38,6 +38,15 @@
         <el-button
           type="primary"
           plain
+          icon="Refresh"
+          @click="batchSync"
+          v-hasPermi="['spider:spiderSource:add']"
+        >一键同步</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          plain
           icon="Plus"
           @click="handleAdd"
           v-hasPermi="['spider:spiderSource:add']"
@@ -148,7 +157,7 @@
 </template>
 
 <script setup name="SpiderSource">
-import { listSpiderSource, getSpiderSource, delSpiderSource, addSpiderSource, updateSpiderSource,syncSpiderSource } from "@/api/spider/spiderSource";
+import { listSpiderSource, getSpiderSource, delSpiderSource, addSpiderSource, updateSpiderSource,syncSpiderSource,batchSyncSource } from "@/api/spider/spiderSource";
 
 const { proxy } = getCurrentInstance();
 const { sync_status, nana_category } = proxy.useDict('sync_status', 'nana_category');
@@ -293,6 +302,15 @@ function handleSync(row) {
   const _ids = row.id || ids.value;
   proxy.$modal.confirm('是否确认同步中创采集编号为"' + _ids + '"的数据项？').then(function() {
     return syncSpiderSource(_ids);
+  }).then(() => {
+    getList();
+    proxy.$modal.msgSuccess("同步成功");
+  }).catch(() => {});
+}
+/** 一键同步操作 */
+function batchSync() {
+  proxy.$modal.confirm('是否确认一键同步？').then(function() {
+    return batchSyncSource();
   }).then(() => {
     getList();
     proxy.$modal.msgSuccess("同步成功");

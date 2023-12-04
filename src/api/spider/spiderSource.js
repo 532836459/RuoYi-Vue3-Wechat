@@ -49,3 +49,10 @@ export function syncSpiderSource(id) {
     method: 'get'
   })
 }
+// 一键同步中创采集
+export function batchSyncSource() {
+  return request({
+    url: '/spider/spiderSource/batchSync',
+    method: 'get'
+  })
+}

@@ -2,12 +2,14 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="所属站点" prop="websiteId">
-        <el-input
-          v-model="queryParams.websiteId"
-          placeholder="请选择"
-          clearable
-          @keyup.enter="handleQuery"
-        />
+        <el-select placeholder="请选择所属站点" v-model="queryParams.websiteId" clearable>
+          <el-option
+              v-for="item in websiteList"
+              :key="item.id"
+              :label="item.title"
+              :value="item.id"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="同步状态" prop="syncStatus">
         <el-select v-model="queryParams.syncStatus" placeholder="请选择" clearable>
@@ -158,11 +160,13 @@
 
 <script setup name="Records">
 import {listRecords, getRecords, delRecords, addRecords, updateRecords, sync} from "@/api/website/records";
+import {listManage} from "@/api/website/manage";
 
 const { proxy } = getCurrentInstance();
 const { sync_status } = proxy.useDict('sync_status');
 
 const recordsList = ref([]);
+const websiteList = ref([]);
 const open = ref(false);
 const showDetail = ref(false);
 const loading = ref(true);
@@ -326,5 +330,13 @@ function handleSync(row){
   }).catch(() => {});
 }
 
+function getWebsiteList() {
+  listManage(queryParams.value).then(response => {
+    console.log(response.rows);
+    websiteList.value = response.rows;
+  });
+}
+
 getList();
+getWebsiteList();
 </script>

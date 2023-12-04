@@ -50,3 +50,4 @@ export function sync(id) {
     method: 'get'
   })
 }
+
