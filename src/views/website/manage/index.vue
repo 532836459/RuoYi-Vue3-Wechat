@@ -82,7 +82,7 @@
       <el-table-column label="id" align="center" prop="id" width="55" />
       <el-table-column label="域名" align="center" prop="url" width="200" />
       <el-table-column label="网站名称" align="center" prop="title" />
-      <el-table-column label="分类名称" align="center" prop="categoryName" />
+      <el-table-column label="默认分类" align="center" prop="categoryName" />
       <el-table-column label="项目单价" align="center" prop="price" width="100" />
       <el-table-column label="VIP折扣" align="center" prop="vipPrice" width="100" />
       <el-table-column label="状态" align="center" prop="commonStatus" width="100">
@@ -134,8 +134,8 @@
           </el-col>
           <el-col :span="1"></el-col>
           <el-col :span="9">
-            <el-form-item label="分类名称" prop="categoryId">
-              <el-select placeholder="请选择分类名称" v-model="form.categoryId"
+            <el-form-item label="默认分类" prop="categoryId">
+              <el-select placeholder="请选择默认分类" v-model="form.categoryId"
                          @change="changeWordpressCategory">
                 <el-option
                     v-for="item in wordpressCategory"
@@ -150,6 +150,52 @@
           <el-col :span="1">
             <el-tooltip content="需要填写完域名才能获取成功" placement="top" >
               <el-button round type="primary" @click="getCategory">点击获取分类</el-button>
+            </el-tooltip>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="自动项目" prop="autoProjectId">
+              <el-select v-model="form.autoProjectId"
+                         @change="changeAutoCategory" clearable @clear="clearAutoProject">
+                <el-option
+                    v-for="item in wordpressCategory"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="网站源码" prop="websiteSourceId">
+              <el-select v-model="form.websiteSourceId"
+                         @change="changeWebsiteCategory" clearable @clear="clearWebsiteSource">
+                <el-option
+                    v-for="item in wordpressCategory"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item label="TIKTOK" prop="tiktokId">
+              <el-select v-model="form.tiktokId"
+                         @change="changeTiktokCategory" clearable @clear="clearTiktok">
+                <el-option
+                    v-for="item in wordpressCategory"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="1" style="margin: 10px auto">
+            <el-tooltip content="配置后会自动同步-自动项目，tiktok课程，网站源码等分类" effect="dark" placement="top">
+              <el-icon><InfoFilled /></el-icon>
             </el-tooltip>
           </el-col>
         </el-row>
@@ -205,6 +251,7 @@
 
 <script setup name="Manage">
 import {listManage, getManage, delManage, addManage, updateManage, getWordpressCategory} from "@/api/website/manage";
+import {InfoFilled} from "@element-plus/icons-vue";
 
 const { proxy } = getCurrentInstance();
 const {nana_common_status, nana_auto_sync} = proxy.useDict('nana_common_status', 'nana_auto_sync');
@@ -264,11 +311,52 @@ function getCategory() {
 
 function changeWordpressCategory(event) {
   for (let i in wordpressCategory.value) {
-    if (wordpressCategory.value[i].id == event) {
+    if (wordpressCategory.value[i].id === event) {
       form.value.categoryName = wordpressCategory.value[i].name;
       break;
     }
   }
+}
+
+function changeAutoCategory(event) {
+  for (let i in wordpressCategory.value) {
+    if (wordpressCategory.value[i].id === event) {
+      form.value.autoProjectName = wordpressCategory.value[i].name;
+      break;
+    }
+  }
+}
+
+function changeWebsiteCategory(event) {
+  for (let i in wordpressCategory.value) {
+    if (wordpressCategory.value[i].id === event) {
+      form.value.websiteSourceName = wordpressCategory.value[i].name;
+      break;
+    }
+  }
+}
+
+function changeTiktokCategory(event) {
+  for (let i in wordpressCategory.value) {
+    if (wordpressCategory.value[i].id === event) {
+      form.value.tiktokName = wordpressCategory.value[i].name;
+      break;
+    }
+  }
+}
+
+function clearAutoProject() {
+  form.value.autoProjectId = '';
+  form.value.autoProjectName = '';
+}
+
+function clearWebsiteSource() {
+  form.value.websiteSourceId = '';
+  form.value.websiteSourceName = '';
+}
+function clearTiktok() {
+  form.value.tiktokId = "";
+  form.value.tiktokName = "";
 }
 
 /** 查询站点管理列表 */
@@ -304,7 +392,13 @@ function reset() {
     createTime: null,
     updateTime: null,
     expireTime: null,
-    autoSync: null
+    autoSync: null,
+    autoProjectId: null,
+    autoProjectName: null,
+    websiteSourceId: null,
+    websiteSourceName: null,
+    tiktokId: null,
+    tiktokName: null
   };
   wordpressCategory.value = null;
   proxy.resetForm("manageRef");
@@ -350,7 +444,16 @@ function handleUpdate(row) {
     open.value = true;
     wordpressCategory.value = [{
       'id': form.value.categoryId,
-      'name': form.value.categoryName,
+      'name': form.value.categoryName
+    },{
+      'id': form.value.autoProjectId,
+      'name': form.value.autoProjectName
+    },{
+      'id': form.value.websiteSourceId,
+      'name': form.value.websiteSourceName
+    },{
+      'id': form.value.tiktokId,
+      'name': form.value.tiktokName
     }];
     title.value = "修改站点管理";
   });
