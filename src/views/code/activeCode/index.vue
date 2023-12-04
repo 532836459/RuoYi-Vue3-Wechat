@@ -89,7 +89,7 @@
       <el-table-column label="激活码" align="center" prop="code" />
       <el-table-column label="激活时间" align="center" prop="activeTime" width="180">
         <template #default="scope">
-          <span>{{ parseTime(scope.row.activeTime, '{y}-{m}-{d}') }}</span>
+          <span>{{ parseTime(scope.row.activeTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="备注" align="center" prop="remark" />
