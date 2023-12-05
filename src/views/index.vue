@@ -102,6 +102,12 @@
             </div>
           </template>
           <el-collapse accordion>
+            <el-collapse-item title="v1.1.0 - 2023-12-05">
+              <ol>
+                <li>优化采集同步</li>
+                <li>新增自动同步-自动项目、网站源码、TIKTOK分类</li>
+              </ol>
+            </el-collapse-item>
             <el-collapse-item title="v1.0.0 - 2023-12-01">
               <ol>
                 <li>娜娜采集管理系统正式发布</li>
@@ -136,7 +142,7 @@
 </template>
 
 <script setup name="Index">
-const version = ref('1.0.0')
+const version = ref('1.1.0')
 
 function goTarget(url) {
   window.open(url, '__blank')
