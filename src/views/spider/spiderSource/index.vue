@@ -124,16 +124,32 @@
         <el-form-item label="网盘链接" prop="downUrl">
           <el-input v-model="form.downUrl" placeholder="请输入百度网盘链接" type="textarea" :rows="3" />
         </el-form-item>
-        <el-form-item label="所属分类" prop="category">
-          <el-checkbox-group v-model="form.category">
-            <el-checkbox
-                v-for="dict in nana_category"
-                :key="dict.value"
-                :label="dict.value">
-              {{dict.label}}
-            </el-checkbox>
-          </el-checkbox-group>
-        </el-form-item>
+        <el-row>
+          <el-col :span="16">
+            <el-form-item label="所属分类" prop="category">
+              <el-checkbox-group v-model="form.category" size="small">
+                <el-checkbox-button
+                    v-for="dict in nana_category"
+                    :key="dict.value"
+                    :label="dict.value">
+                  {{dict.label}}
+                </el-checkbox-button>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="状态" prop="syncStatus">
+              <el-select v-model="queryParams.syncStatus" size="small" clearable>
+                <el-option
+                    v-for="dict in sync_status"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="内容">
           <editor v-model="form.content" :min-height="192" :height="250"/>
         </el-form-item>
