@@ -238,6 +238,19 @@
            </el-form-item>
          </el-col>
        </el-row>
+        <el-row v-if="isAdd">
+          <el-col :span="12">
+            <el-form-item label="激活码" prop="activeCode">
+              <el-input v-model="form.activeCode" placeholder="请输入激活码" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="1"></el-col>
+          <el-col :span="11">
+              <el-tag type="danger" size="large">
+                联系娜娜获取激活码，微信：nanadh666
+              </el-tag>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -258,6 +271,7 @@ const {nana_common_status, nana_auto_sync} = proxy.useDict('nana_common_status',
 
 const manageList = ref([]);
 const open = ref(false);
+const isAdd = ref(false);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
@@ -290,6 +304,7 @@ const data = reactive({
     categoryId: [{ required: true, message: "所属分类不能为空", trigger: "blur" }],
     price: [{ required: true, message: "项目单价不能为空", trigger: "blur" }],
     vipPrice: [{ required: true, message: "VIP折扣不能为空", trigger: "blur" }],
+    activeCode: [{ required: true, message: "激活码不能为空", trigger: "blur" }],
   }
 });
 
@@ -398,9 +413,11 @@ function reset() {
     websiteSourceId: null,
     websiteSourceName: null,
     tiktokId: null,
-    tiktokName: null
+    tiktokName: null,
+    activeCode: null,
   };
   wordpressCategory.value = null;
+  isAdd.value = false;
   proxy.resetForm("manageRef");
 }
 
@@ -427,6 +444,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   open.value = true;
+  isAdd.value = true;
   title.value = "添加站点管理";
   form.value.appendContent = defaultAppend;
   form.value.commonStatus = "1";
@@ -473,6 +491,7 @@ function submitForm() {
         addManage(form.value).then(response => {
           proxy.$modal.msgSuccess("新增成功");
           open.value = false;
+          isAdd.value = false;
           getList();
         });
       }
