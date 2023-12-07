@@ -139,13 +139,13 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="状态" prop="syncStatus">
-              <el-select v-model="queryParams.syncStatus" size="small" clearable>
+              <el-select v-model="form.syncStatus" size="small">
                 <el-option
                     v-for="dict in sync_status"
                     :key="dict.value"
                     :label="dict.label"
-                    :value="dict.value"
-                />
+                    :value="parseInt(dict.value)"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
