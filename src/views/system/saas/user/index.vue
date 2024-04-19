@@ -88,8 +88,8 @@
          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
          <el-table-column label="用户帐号" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-         <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-         <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+         <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[3].visible" width="120" />
+         <el-table-column label="状态" align="center" key="status" v-if="columns[4].visible">
             <template #default="scope">
                <el-switch
                   v-model="scope.row.status"
@@ -99,20 +99,25 @@
                ></el-switch>
             </template>
          </el-table-column>
-         <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-            <template #default="scope">
-               <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
+         <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[5].visible" width="160">
+           <template #default="scope">
+             <span>{{ parseTime(scope.row.createTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+           </template>
          </el-table-column>
+        <el-table-column label="过期时间" align="center" prop="expireTime" v-if="columns[6].visible" width="160">
+          <template #default="scope" v-if="expireTime != null">
+            <span>{{ parseTime(scope.row.expireTime, '{y}-{m}-{d} {h}:{i}') }}</span>
+          </template>
+        </el-table-column>
          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
             <template #default="scope">
-               <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1 && scope.row.userId !== 2">
+               <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
                   <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:saas:user']"></el-button>
                </el-tooltip>
-               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1 && scope.row.userId !== 2">
+               <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
                   <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:saas:user']"></el-button>
                </el-tooltip>
-               <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1 && scope.row.userId !== 2">
+               <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
                    <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:saas:user']"></el-button>
                </el-tooltip>
             </template>
@@ -179,6 +184,19 @@
                   </el-form-item>
                </el-col>
             </el-row>
+           <el-row>
+             <el-col :span="24">
+               <el-form-item label="过期时间" prop="expireTime">
+                 <el-date-picker
+                     v-model="form.expireTime"
+                     type="datetime"
+                     format="YYYY-MM-DD HH:mm"
+                     value-format="YYYY-MM-DD HH:mm"
+                     placeholder="请选择过期时间"
+                 />
+               </el-form-item>
+             </el-col>
+           </el-row>
             <el-row>
                <el-col :span="24">
                   <el-form-item label="备注">
@@ -200,6 +218,7 @@
 
 <script setup name="User">
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/saasUser.js";
+import { parseTime } from "@/utils/ruoyi.js";
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -225,10 +244,10 @@ const columns = ref([
   { key: 0, label: `用户编号`, visible: true },
   { key: 1, label: `用户帐号`, visible: true },
   { key: 2, label: `用户昵称`, visible: true },
-  { key: 4, label: `手机号码`, visible: true },
-  { key: 5, label: `状态`, visible: true },
-  { key: 6, label: `创建时间`, visible: true },
-  { key: 7, label: `过期时间`, visible: true },
+  { key: 3, label: `手机号码`, visible: true },
+  { key: 4, label: `状态`, visible: true },
+  { key: 5, label: `创建时间`, visible: true },
+  { key: 6, label: `过期时间`, visible: true },
 ]);
 
 const data = reactive({
@@ -244,7 +263,8 @@ const data = reactive({
     userName: [{ required: true, message: "用户名称不能为空", trigger: "blur" }, { min: 2, max: 20, message: "用户名称长度必须介于 2 和 20 之间", trigger: "blur" }],
     nickName: [{ required: true, message: "用户昵称不能为空", trigger: "blur" }],
     password: [{ required: true, message: "用户密码不能为空", trigger: "blur" }, { min: 5, max: 20, message: "用户密码长度必须介于 5 和 20 之间", trigger: "blur" }, { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }],
-    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }]
+    phonenumber: [{ pattern: /^1[3|4|5|6|7|8|9][0-9]\d{8}$/, message: "请输入正确的手机号码", trigger: "blur" }],
+    expireTime: [{ required: true, message: "过期时间不能为空", trigger: "blur" }],
   }
 });
 
@@ -352,6 +372,10 @@ function handleAdd() {
     open.value = true;
     title.value = "添加Saas用户";
     form.value.password = initPassword.value;
+    let now = new Date();
+    now.setFullYear(now.getFullYear() + 1);
+    now = parseTime(now, '{y}-{m}-{d} {h}:{i}');
+    form.value.expireTime = now;
   });
 };
 /** 修改按钮操作 */
