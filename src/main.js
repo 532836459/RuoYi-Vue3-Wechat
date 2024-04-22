@@ -80,5 +80,6 @@ app.use(ElementPlus, {
   // 支持 large、default、small
   size: Cookies.get('size') || 'default'
 })
-
+//模态框点击空白不消失
+app._context.components.ElDialog.props.closeOnClickModal.default = false
 app.mount('#app')
