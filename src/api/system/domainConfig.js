@@ -1,5 +1,31 @@
 import request from '@/utils/request'
 
+// 查询存储配置列表
+export function selectStorageList() {
+  return request({
+    url: '/system/domainConfig/selectStorageList',
+    method: 'get'
+  })
+}
+
+// 查询存储配置详情
+export function selectStorageDetail(query) {
+  return request({
+    url: '/system/domainConfig/selectStorageDetail',
+    method: 'get',
+    params: query
+  })
+}
+
+// 修改存储配置
+export function updateStorage(data) {
+  return request({
+    url: '/system/domainConfig/updateStorage',
+    method: 'put',
+    data: data
+  })
+}
+
 // 查询站点配置列表
 export function listDomainConfig(query) {
   return request({
