@@ -24,8 +24,8 @@
     </el-table>
 
     <!-- 设置存储配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="domainConfigRef" :model="form" :rules="rules" label-width="120px">
+    <el-dialog :title="title" v-model="open" width="600px" append-to-body>
+      <el-form ref="domainConfigRef" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="存储方式" prop="name">
           <div>
             <el-radio model-value>{{ getStorageInfo?.name }} </el-radio>
@@ -33,27 +33,77 @@
           </div>
         </el-form-item>
         <div v-if="form.alias !== StorageEnum.LOCAL">
-          <el-form-item label="存储空间名称" prop="bucket">
-            <el-input v-model="form.bucket" placeholder="请输入存储空间名称(Bucket)" />
-          </el-form-item>
-          <el-form-item label="ACCESS_KEY" prop="accessKey">
-            <el-input v-model="form.accessKey" placeholder="请输入ACCESS_KEY(AK)" />
-          </el-form-item>
-          <el-form-item label="SECRET_KEY" prop="secretKey">
-            <el-input v-model="form.secretKey" placeholder="请输入SECRET_KEY(SK)" />
-          </el-form-item>
+          <div v-if="form.alias === StorageEnum.QINIU">
+            <el-form-item label="存储空间名称" prop="bucket">
+              <el-input v-model="form.bucket" placeholder="请输入存储空间名称(Bucket)" />
+            </el-form-item>
+            <el-form-item label="ACCESS_KEY" prop="accessKey">
+              <el-input v-model="form.accessKey" placeholder="请输入ACCESS_KEY(AK)" />
+            </el-form-item>
+            <el-form-item label="SECRET_KEY" prop="secretKey">
+              <el-input v-model="form.secretKey" placeholder="请输入SECRET_KEY(SK)" />
+            </el-form-item>
+            <el-form-item label="存储区域" prop="region">
+              <el-select v-model="form.region" placeholder="请选择存储区域">
+                <el-option
+                   v-for="dict in na_qiniu_region"
+                   :key="dict.value"
+                   :label="dict.label"
+                   :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+          <div v-else-if="form.alias === StorageEnum.ALIYUN">
+            <el-form-item label="Bucket 名称" prop="bucket">
+              <el-input v-model="form.bucket" placeholder="请输入Bucket 名称" />
+            </el-form-item>
+            <el-form-item label="AccessKey ID" prop="accessKey">
+              <el-input v-model="form.accessKey" placeholder="请输入AccessKey ID" />
+            </el-form-item>
+            <el-form-item label="AccessKey Secret" prop="secretKey">
+              <el-input v-model="form.secretKey" placeholder="请输入AccessKey Secret" />
+            </el-form-item>
+            <el-form-item label="地域节点" prop="region">
+              <el-select v-model="form.region" placeholder="请选择地域节点">
+                <el-option
+                    v-for="dict in na_aliyun_endpoint"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
+          <div v-else-if="form.alias === StorageEnum.QCLOUD">
+            <el-form-item label="存储桶名称(Bucket)" prop="bucket">
+              <el-input v-model="form.bucket" placeholder="请输入存储桶名称" />
+            </el-form-item>
+            <el-form-item label="App ID" prop="bucket">
+              <el-input v-model="form.appId" placeholder="请输入App ID" />
+            </el-form-item>
+            <el-form-item label="Secret ID" prop="bucket">
+              <el-input v-model="form.accessKey" placeholder="请输入Secret ID" />
+            </el-form-item>
+            <el-form-item label="Secret Key" prop="accessKey">
+              <el-input v-model="form.secretKey" placeholder="请输入Secret Key" />
+            </el-form-item>
+            <el-form-item label="地域节点" prop="region">
+              <el-select v-model="form.region" placeholder="请选择地域节点">
+                <el-option
+                    v-for="dict in na_qcloud_region"
+                    :key="dict.value"
+                    :label="dict.label"
+                    :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+          </div>
           <el-form-item label="空间域名" prop="domain">
             <el-input v-model="form.domain"  placeholder="请输入空间域名(Domain)" />
             <div style="margin-top: 5px;font-size: 12px;line-height: 24px;color: #999999">
               请补全http://或https://，例如https://static.cloud.com
             </div>
-          </el-form-item>
-          <el-form-item
-              v-if="form.alias === StorageEnum.QCLOUD"
-              label="REGION"
-              prop="region"
-          >
-            <el-input v-model="form.region" placeholder="请输入region" clearable />
           </el-form-item>
         </div>
         <el-form-item label="状态" prop="status">
@@ -77,7 +127,12 @@
 import { selectStorageList, selectStorageDetail, updateStorage} from "@/api/system/domainConfig";
 
 const { proxy } = getCurrentInstance();
-const { na_sys_enable } = proxy.useDict("na_sys_enable");
+const {
+  na_sys_enable,
+  na_qiniu_region,
+  na_aliyun_endpoint,
+  na_qcloud_region
+} = proxy.useDict("na_sys_enable", "na_qiniu_region", "na_aliyun_endpoint","na_qcloud_region");
 
 const domainConfigList = ref([]);
 const open = ref(false);
@@ -89,6 +144,7 @@ const data = reactive({
   form: {},
   rules: {
     bucket: [{ required: true, message: "存储空间名称不能为空", trigger: "blur" },],
+    appId: [{ required: true, message: "appId不能为空", trigger: "blur" },],
     accessKey: [{ required: true, message: "ACCESS_KEY不能为空", trigger: "blur" },],
     secretKey: [{ required: true, message: "SECRET_KEY不能为空", trigger: "blur" },],
     domain: [{ required: true, message: "空间域名不能为空", trigger: "blur" },],
@@ -128,6 +184,7 @@ function cancel() {
 function reset() {
   form.value = {
     id: null,
+    appId: null,
     bucket: null,
     accessKey: null,
     secretKey: null,
