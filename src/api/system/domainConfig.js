@@ -26,6 +26,14 @@ export function updateStorage(data) {
   })
 }
 
+//查询网站配置详情
+export function websiteDetail() {
+  return request({
+    url: '/system/website/detail',
+    method: 'get'
+  })
+}
+
 // 查询站点配置列表
 export function listDomainConfig(query) {
   return request({
