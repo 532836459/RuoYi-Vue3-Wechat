@@ -16,13 +16,13 @@ onMounted(() => {
     websiteDetail().then(response => {
       let favicon = document.querySelector('link[rel="icon"]');
       if (favicon) {
-        favicon.href = import.meta.env.VITE_APP_BASE_API + response.data.logo
-        return
+        favicon.href = import.meta.env.VITE_APP_BASE_API + response.data.favicon;
+        return;
       }
-      favicon = document.createElement('link')
-      favicon.rel = 'icon'
-      favicon.href = import.meta.env.VITE_APP_BASE_API + data.response.data.logo
-      document.head.appendChild(favicon)
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      favicon.href = import.meta.env.VITE_APP_BASE_API + data.response.data.favicon;
+      document.head.appendChild(favicon);
     });
 
     //设置网站title

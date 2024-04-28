@@ -34,6 +34,15 @@ export function websiteDetail() {
   })
 }
 
+//保存网站配置详情
+export function websiteSave(data) {
+  return request({
+    url: '/system/website/save',
+    method: 'post',
+    data
+  })
+}
+
 // 查询站点配置列表
 export function listDomainConfig(query) {
   return request({
