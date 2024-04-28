@@ -59,7 +59,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2018-2024 ruoyi.vip All Rights Reserved.</span>
+      <span><a href="https://beian.miit.gov.cn">{{copyright}}</a></span>
     </div>
   </div>
 </template>
@@ -92,6 +92,7 @@ const loginRules = {
 
 const codeUrl = ref("");
 const title = ref("");
+const copyright = ref("");
 const loading = ref(false);
 // 验证码开关
 const captchaEnabled = ref(true);
@@ -162,6 +163,7 @@ function getCookie() {
 function getWebsiteTitle() {
   websiteDetail().then(response =>{
     title.value = response.data.name;
+    copyright.value = response.data.copyright;
   })
 }
 

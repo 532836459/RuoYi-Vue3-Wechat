@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-form ref="siteConfigRef" v-loading="loading" :rules="rules" :model="form" label-width="120px">
-      <el-card shadow="never" style="border: none">
+      <el-card shadow="never" style="border: none;">
         <div style="font-size: 16px;font-weight: 500;margin-bottom: 20px;">后台设置</div>
         <el-form-item label="网站名称" prop="name">
           <div class="w-80">
@@ -32,6 +32,18 @@
             <image-upload v-model="form.loginImg" :limit="1" :isShowTip="false"/>
 <!--            <material-picker v-model="domainConfigList.backdrop" :limit="1" />-->
             <div class="form-tips">建议尺寸：400*400像素，支持jpg，jpeg，png格式</div>
+          </div>
+        </el-form-item>
+      </el-card>
+      <el-divider border-style="dashed" />
+      <el-card shadow="never" style="border: none">
+        <div style="font-size: 16px;font-weight: 500;margin-bottom: 20px;">底部版权备案信息</div>
+        <el-form-item label="版权显示内容" prop="copyright">
+          <div class="w-80">
+            <el-input
+                v-model="form.copyright"
+                placeholder="请输入底部版权显示内容"
+            ></el-input>
           </div>
         </el-form-item>
       </el-card>
