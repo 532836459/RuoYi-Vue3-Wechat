@@ -14,10 +14,10 @@
 </template>
 
 <script setup>
-import { websiteDetail } from "@/api/system/domainConfig";
 import variables from '@/assets/styles/variables.module.scss'
 import useSettingsStore from '@/store/modules/settings'
-
+import useConfigStore from "@/store/modules/config.js";
+const configStore = useConfigStore()
 defineProps({
   collapse: {
     type: Boolean,
@@ -25,23 +25,9 @@ defineProps({
   }
 })
 
-const logo = ref("");
-const title = ref("");
+const title = computed(() => configStore.name);
+const logo = computed(() => configStore.logo);
 
-/** 获取网站配置详情 */
-function getWebsiteLogo() {
-  websiteDetail().then(response =>{
-    title.value = response.data.name;
-    if (response.data.logo.indexOf('http') === 0) {
-      logo.value = response.data.logo;
-    }else {
-      logo.value = import.meta.env.VITE_APP_BASE_API + response.data.logo;
-    }
-  })
-}
-
-getWebsiteLogo();
-// const title = import.meta.env.VITE_APP_TITLE;
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>

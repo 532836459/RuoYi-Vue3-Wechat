@@ -56,8 +56,10 @@
 
 <script setup name="siteConfig">
 import {websiteDetail, websiteSave} from "@/api/system/domainConfig";
-const { proxy } = getCurrentInstance();
+import useConfigStore from "@/store/modules/config.js";
 
+const configStore = useConfigStore();
+const { proxy } = getCurrentInstance();
 const loading = ref(true);
 const data = reactive({
   form: {},
@@ -69,7 +71,6 @@ const data = reactive({
 });
 
 const { form, rules } = toRefs(data);
-
 /** 查询网站信息配置 */
 function getDetail() {
   loading.value = true;
@@ -87,6 +88,8 @@ function submitForm() {
       websiteSave(form.value).then(response => {
         proxy.$modal.msgSuccess("保存成功");
         getDetail();
+        //刷新pinia
+        configStore.getConfig();
       });
     }
   });

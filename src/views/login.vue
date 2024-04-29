@@ -69,9 +69,10 @@ import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from "@/utils/jsencrypt";
 import useUserStore from '@/store/modules/user'
-import { websiteDetail } from "@/api/system/domainConfig";
+import useConfigStore from "@/store/modules/config.js";
 
 const userStore = useUserStore()
+const configStore = useConfigStore()
 const route = useRoute();
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -91,8 +92,6 @@ const loginRules = {
 };
 
 const codeUrl = ref("");
-const title = ref("");
-const copyright = ref("");
 const loading = ref(false);
 // 验证码开关
 const captchaEnabled = ref(true);
@@ -160,16 +159,12 @@ function getCookie() {
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
   };
 }
-function getWebsiteTitle() {
-  websiteDetail().then(response =>{
-    title.value = response.data.name;
-    copyright.value = response.data.copyright;
-  })
-}
+
+const title = computed(() => configStore.name);
+const copyright = computed(() => configStore.copyright);
 
 getCode();
 getCookie();
-getWebsiteTitle();
 </script>
 
 <style lang='scss' scoped>
