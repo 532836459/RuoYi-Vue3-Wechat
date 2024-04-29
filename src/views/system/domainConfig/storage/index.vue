@@ -29,7 +29,7 @@
         <el-form-item label="存储方式" prop="name">
           <div>
             <el-radio model-value>{{ getStorageInfo?.name }} </el-radio>
-            <div style="margin-top: 5px;font-size: 12px;line-height: 24px;color: #999999">{{ getStorageInfo?.tips }}</div>
+            <div class="form-tips">{{ getStorageInfo?.tips }}</div>
           </div>
         </el-form-item>
         <div v-if="form.alias !== StorageEnum.LOCAL">
@@ -101,7 +101,7 @@
           </div>
           <el-form-item label="空间域名" prop="domain">
             <el-input v-model="form.domain"  placeholder="请输入空间域名(Domain)" />
-            <div style="margin-top: 5px;font-size: 12px;line-height: 24px;color: #999999">
+            <div class="form-tips">
               请补全http://或https://，例如https://static.cloud.com
             </div>
           </el-form-item>
