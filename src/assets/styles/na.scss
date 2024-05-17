@@ -4,4 +4,57 @@
   line-height: 24px;
   color: var(--el-text-color-secondary);
 }
-
+.flex{
+  display: flex;
+}
+.items-center {
+  align-items: center;
+}
+.justify-center {
+  justify-content: center;
+}
+.relative {
+  position: relative;
+}
+.flex-1 {
+  flex: 1 1 0%;
+}
+.text-sm {
+  font-size: var( --el-font-size-small);
+}
+.h-full {
+  height: 100%;
+}
+.w-full {
+  width: 100%;
+}
+.p-4 {
+  padding: 16px;
+}
+.rounded {
+  border-radius: 0.25rem /* 4px */;
+}
+.bg-fill-light {
+  background-color: var(--el-fill-color-light);
+}
+.mr-auto {
+  margin-right: auto;
+}
+.ml-5 {
+  margin-left: 20px;
+}
+.\!border-none {
+  border-style: none !important;
+}
+.mt-4 {
+  margin-top: 16px;
+}
+.mr-\[35px\] {
+  margin-right: 35px;
+}
+.w-3\/4 {
+  width: 75%;
+}
+.text-base {
+  font-size: var( --el-font-size-base);
+}
