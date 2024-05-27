@@ -1,264 +1,195 @@
 <template>
-  <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="键" prop="key">
-        <el-input
-            v-model="queryParams.key"
-            placeholder="请输入键"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="租户id" prop="tenantId">
-        <el-input
-            v-model="queryParams.tenantId"
-            placeholder="请输入租户id"
-            clearable
-            @keyup.enter="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-        <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-      </el-form-item>
+  <div>
+    <el-card class="!border-none" shadow="never">
+      <el-alert
+          type="warning"
+          title="温馨提示：填写微信公众号开发配置，请前往微信公众平台申请服务号并完成认证"
+          :closable="false"
+          show-icon
+      />
+    </el-card>
+    <el-form ref="formRef" :model="formData" label-width="160px">
+      <el-card class="!border-none mt-4" shadow="never">
+        <div class="font-medium mb-7">微信公众号</div>
+        <el-form-item label="公众号名称" prop="name">
+          <div class="w-80">
+            <el-input v-model="formData.name" placeholder="请输入公众号名称" />
+          </div>
+        </el-form-item>
+        <el-form-item label="原始ID" prop="primaryId">
+          <div class="w-80">
+            <el-input v-model="formData.primaryId" placeholder="请输入原始ID" />
+          </div>
+        </el-form-item>
+        <el-form-item label="公众号二维码" prop="qrCode">
+          <div>
+            <div>
+              <material-picker v-model="formData.qrCode" :limit="1" />
+            </div>
+            <div class="form-tips">建议尺寸：宽400px*高400px。jpg，jpeg，png格式</div>
+          </div>
+        </el-form-item>
+      </el-card>
+      <el-card class="!border-none mt-4" shadow="never">
+        <div class="font-medium mb-7">公众号开发者信息</div>
+        <el-form-item label="AppID" prop="appId">
+          <div class="w-80">
+            <el-input v-model="formData.appId" placeholder="请输入AppID" />
+          </div>
+        </el-form-item>
+        <el-form-item label="AppSecret" prop="appSecret">
+          <div>
+            <div class="w-80">
+              <el-input v-model="formData.appSecret" placeholder="请输入AppSecret" />
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item>
+          <div class="form-tips">
+            小程序账号登录微信公众平台，点击开发>开发设置->开发者ID，设置AppID和AppSecret
+          </div>
+        </el-form-item>
+      </el-card>
+      <el-card class="!border-none mt-4" shadow="never">
+        <div class="font-medium mb-7">服务器配置</div>
+        <el-form-item label="URL">
+          <div>
+            <div class="flex">
+              <div class="mr-4 w-80">
+                <el-input v-model="formData.url" disabled />
+              </div>
+              <el-button v-copy="formData.url">复制</el-button>
+            </div>
+            <div class="form-tips">
+              登录微信公众平台，点击开发>基本配置>服务器配置，填写服务器地址（URL）
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="Token" prop="Token">
+          <div>
+            <div class="w-80">
+              <el-input v-model="formData.token" placeholder="请输入Token" />
+            </div>
+            <div class="form-tips">
+              登录微信公众平台，点击开发>基本配置>服务器配置，设置令牌Token。不填默认为“likeshop”
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="EncodingAESKey" prop="EncodingAESKey">
+          <div>
+            <div class="w-80">
+              <el-input
+                  v-model="formData.encodingAesKey"
+                  placeholder="请输入EncodingAESKey"
+              />
+            </div>
+            <div class="form-tips">
+              消息加密密钥由43位字符组成，字符范围为A-Z,a-z,0-9
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="消息加密方式" required prop="status">
+          <div>
+            <el-radio-group
+                class="flex-col !items-start"
+                v-model="formData.encryptionType"
+            >
+              <el-radio :label="1">
+                明文模式 (不使用消息体加解密功能，安全系数较低)
+              </el-radio>
+
+              <el-radio :label="2">
+                兼容模式 (明文、密文将共存，方便开发者调试和维护)
+              </el-radio>
+              <el-radio :label="3">
+                安全模式（推荐） (消息包为纯密文，需要开发者加密和解密，安全系数高)
+              </el-radio>
+            </el-radio-group>
+          </div>
+        </el-form-item>
+      </el-card>
+      <el-card class="!border-none mt-4" shadow="never">
+        <div class="font-medium mb-7">功能设置</div>
+        <el-form-item label="业务域名">
+          <div>
+            <div class="flex">
+              <div class="mr-4 w-80">
+                <el-input v-model="formData.businessDomain" disabled />
+              </div>
+              <el-button v-copy="formData.businessDomain">复制</el-button>
+            </div>
+            <div class="form-tips">
+              登录微信公众平台，点击设置>公众号设置>功能设置，填写业务域名
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="JS接口安全域名">
+          <div>
+            <div class="flex">
+              <div class="mr-4 w-80">
+                <el-input v-model="formData.jsDomain" disabled />
+              </div>
+              <el-button v-copy="formData.jsDomain">复制</el-button>
+            </div>
+            <div class="form-tips">
+              登录微信公众平台，点击设置>公众号设置>功能设置，填写JS接口安全域名
+            </div>
+          </div>
+        </el-form-item>
+        <el-form-item label="网页授权域名">
+          <div>
+            <div class="flex">
+              <div class="mr-4 w-80">
+                <el-input v-model="formData.webDomain" disabled />
+              </div>
+              <el-button v-copy="formData.webDomain">复制</el-button>
+            </div>
+            <div class="form-tips">
+              登录微信公众平台，点击设置>公众号设置>功能设置，填写网页授权域名
+            </div>
+          </div>
+        </el-form-item>
+      </el-card>
     </el-form>
-
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-            type="primary"
-            plain
-            icon="Plus"
-            @click="handleAdd"
-            v-hasPermi="['system:domainConfig:add']"
-        >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="success"
-            plain
-            icon="Edit"
-            :disabled="single"
-            @click="handleUpdate"
-            v-hasPermi="['system:domainConfig:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="danger"
-            plain
-            icon="Delete"
-            :disabled="multiple"
-            @click="handleDelete"
-            v-hasPermi="['system:domainConfig:remove']"
-        >删除</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-            type="warning"
-            plain
-            icon="Download"
-            @click="handleExport"
-            v-hasPermi="['system:domainConfig:export']"
-        >导出</el-button>
-      </el-col>
-      <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
-    </el-row>
-
-    <el-table v-loading="loading" :data="domainConfigList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="主键" align="center" prop="id" />
-      <el-table-column label="类型" align="center" prop="type" />
-      <el-table-column label="键" align="center" prop="key" />
-      <el-table-column label="值" align="center" prop="value" />
-      <el-table-column label="租户id" align="center" prop="tenantId" />
-      <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-        <template #default="scope">
-          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:domainConfig:edit']">修改</el-button>
-          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:domainConfig:remove']">删除</el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <pagination
-        v-show="total>0"
-        :total="total"
-        v-model:page="queryParams.pageNum"
-        v-model:limit="queryParams.pageSize"
-        @pagination="getList"
-    />
-
-    <!-- 添加或修改站点配置对话框 -->
-    <el-dialog :title="title" v-model="open" width="500px" append-to-body>
-      <el-form ref="domainConfigRef" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="键" prop="key">
-          <el-input v-model="form.key" placeholder="请输入键" />
-        </el-form-item>
-        <el-form-item label="值" prop="value">
-          <el-input v-model="form.value" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-        <el-form-item label="租户id" prop="tenantId">
-          <el-input v-model="form.tenantId" placeholder="请输入租户id" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">确 定</el-button>
-          <el-button @click="cancel">取 消</el-button>
-        </div>
-      </template>
-    </el-dialog>
+    <footer-btns v-perms="['channel:h5:save']">
+      <el-button type="primary" @click="handelSave">保存</el-button>
+    </footer-btns>
   </div>
 </template>
+<script lang="ts" setup name="wxOaConfig">
+import { getOaConfig, setOaConfig } from '@/api/channel/wx_oa'
+import feedback from '@/utils/feedback'
+import { useClipboard } from '@vueuse/core'
 
-<script setup name="DomainConfig">
-import { listDomainConfig, getDomainConfig, delDomainConfig, addDomainConfig, updateDomainConfig } from "@/api/system/domainConfig";
+const formData = reactive({
+  name: '',
+  primaryId: ' ',
+  qrCode: '',
+  appId: '',
+  appSecret: '',
+  url: '',
+  token: '',
+  encodingAesKey: '',
+  encryptionType: 1,
+  businessDomain: '',
+  jsDomain: '',
+  webDomain: ''
+})
 
-const { proxy } = getCurrentInstance();
-
-const domainConfigList = ref([]);
-const open = ref(false);
-const loading = ref(true);
-const showSearch = ref(true);
-const ids = ref([]);
-const single = ref(true);
-const multiple = ref(true);
-const total = ref(0);
-const title = ref("");
-
-const data = reactive({
-  form: {},
-  queryParams: {
-    pageNum: 1,
-    pageSize: 10,
-    type: null,
-    key: null,
-    value: null,
-    tenantId: null,
-    orderByColumn: 'create_time',
-    isAsc: 'desc'
-  },
-  rules: {
-    key: [
-      { required: true, message: "键不能为空", trigger: "blur" }
-    ],
+const { copy } = useClipboard()
+const getDetail = async () => {
+  const data = await getOaConfig()
+  for (const key in formData) {
+    //@ts-ignore
+    formData[key] = data[key]
   }
-});
-
-const { queryParams, form, rules } = toRefs(data);
-
-/** 查询站点配置列表 */
-function getList() {
-  loading.value = true;
-  listDomainConfig(queryParams.value).then(response => {
-    domainConfigList.value = response.rows;
-    total.value = response.total;
-    loading.value = false;
-  });
 }
 
-// 取消按钮
-function cancel() {
-  open.value = false;
-  reset();
-}
+// const handelSave = async () => {
+//   await setOaConfig(formData)
+//   getDetail()
+//   feedback.msgSuccess('操作成功')
+// }
 
-// 表单重置
-function reset() {
-  form.value = {
-    id: null,
-    type: null,
-    key: null,
-    value: null,
-    tenantId: null,
-    createBy: null,
-    createTime: null,
-    updateBy: null,
-    updateTime: null,
-    remark: null
-  };
-  proxy.resetForm("domainConfigRef");
-}
-
-/** 搜索按钮操作 */
-function handleQuery() {
-  queryParams.value.pageNum = 1;
-  getList();
-}
-
-/** 重置按钮操作 */
-function resetQuery() {
-  proxy.resetForm("queryRef");
-  handleQuery();
-}
-
-// 多选框选中数据
-function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id);
-  single.value = selection.length != 1;
-  multiple.value = !selection.length;
-}
-
-/** 新增按钮操作 */
-function handleAdd() {
-  reset();
-  open.value = true;
-  title.value = "添加站点配置";
-}
-
-/** 修改按钮操作 */
-function handleUpdate(row) {
-  reset();
-  const _id = row.id || ids.value
-  getDomainConfig(_id).then(response => {
-    form.value = response.data;
-    open.value = true;
-    title.value = "修改站点配置";
-  });
-}
-
-/** 提交按钮 */
-function submitForm() {
-  proxy.$refs["domainConfigRef"].validate(valid => {
-    if (valid) {
-      if (form.value.id != null) {
-        updateDomainConfig(form.value).then(response => {
-          proxy.$modal.msgSuccess("修改成功");
-          open.value = false;
-          getList();
-        });
-      } else {
-        addDomainConfig(form.value).then(response => {
-          proxy.$modal.msgSuccess("新增成功");
-          open.value = false;
-          getList();
-        });
-      }
-    }
-  });
-}
-
-/** 删除按钮操作 */
-function handleDelete(row) {
-  const _ids = row.id || ids.value;
-  proxy.$modal.confirm('是否确认删除站点配置编号为"' + _ids + '"的数据项？').then(function() {
-    return delDomainConfig(_ids);
-  }).then(() => {
-    getList();
-    proxy.$modal.msgSuccess("删除成功");
-  }).catch(() => {});
-}
-
-/** 导出按钮操作 */
-function handleExport() {
-  proxy.download('system/domainConfig/export', {
-    ...queryParams.value
-  }, `domainConfig_${new Date().getTime()}.xlsx`)
-}
-
-getList();
+getDetail()
 </script>
