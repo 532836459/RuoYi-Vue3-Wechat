@@ -58,7 +58,6 @@ function getList() {
 const addMainMenu = () => {
   menuList.value.push({
     name: '菜单名称',
-    menuType: 1,
     visitType: 'view',
     url: '',
     appId: '',

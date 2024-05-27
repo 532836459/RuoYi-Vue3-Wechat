@@ -57,7 +57,6 @@
 
 <script setup>
 import MenuForm from "./menu-form.vue";
-import MenuFormEdit from "./menu-form-edit.vue";
 import DelWrap from "@/components/DelWrap/index.vue";
 import Popup from "@/components/Popup/index.vue";
 const { proxy } = getCurrentInstance();
@@ -84,7 +83,6 @@ const addSubMenu = () => {
   }
   props.menuList[index].subButtons.push({
     name: '子菜单名称',
-    menuType: 1,
     visitType: 'view',
     url: "",
     appId: "",

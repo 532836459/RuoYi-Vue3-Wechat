@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="menuDataRef" :rules="rules" :model="menuForm" class="pr-10">
+  <el-form ref="menuDataRef" :rules="rules" :model="menuForm">
     <!-- 菜单名称 -->
     <el-form-item :label="modular === 'master' ? '主菜单名称' : '子菜单名称'" prop="name">
       <el-input :model-value="menuForm.name" @input="handleInputChange('name', $event)"/>
