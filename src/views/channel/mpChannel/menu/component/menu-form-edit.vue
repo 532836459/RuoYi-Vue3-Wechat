@@ -55,15 +55,24 @@ watchEffect(() => {
   }
 })
 
-const handleRules = async () => {
-  await menuFormEditRef.value.menuFormRef.validate()
+// const handleRules = async () => {
+//   await menuFormEditRef.value.menuFormRef.validate()
+//   if (props.modular === 'edit') {
+//     emit('edit', { ...form })
+//   } else {
+//     emit('add', { ...form })
+//   }
+//   menuFromPopupRef.value.close()
+//   menuFormEditRef.value.menuFormRef.resetFields()
+// }
+const handleRules = () => {
   if (props.modular === 'edit') {
     emit('edit', { ...form })
   } else {
     emit('add', { ...form })
   }
-  menuFromPopupRef.value.close()
-  menuFormEditRef.value.menuFormRef.resetFields()
+  // menuFromPopupRef.value.close()
+  // menuFormEditRef.value.menuFormRef.resetFields()
 }
 </script>
 
