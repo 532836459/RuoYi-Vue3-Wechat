@@ -79,3 +79,6 @@
 .\!items-start {
   align-items: flex-start !important;
 }
+ .no-shrink {
+   flex-shrink: 0;
+ }
