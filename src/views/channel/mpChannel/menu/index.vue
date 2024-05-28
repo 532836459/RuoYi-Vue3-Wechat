@@ -22,7 +22,7 @@
       </div>
     </el-card>
 
-    <el-affix position="bottom" style="text-align: center;">
+    <el-affix position="bottom" :offset="35" style="text-align: center;">
       <el-button type="primary" @click="handleSave">
         保存
       </el-button>

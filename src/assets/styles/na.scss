@@ -58,3 +58,24 @@
 .text-base {
   font-size: var( --el-font-size-base);
 }
+
+
+//公众号配置用到
+.font-medium {
+  font-weight: 500;
+}
+.mb-7 {
+  margin-bottom: 28px;
+}
+.w-80 {
+  width: 320px;
+}
+.mr-4 {
+   margin-right: 16px;
+ }
+.flex-col {
+  flex-direction: column;
+}
+.\!items-start {
+  align-items: flex-start !important;
+}
