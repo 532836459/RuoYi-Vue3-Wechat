@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-left: 20px;">
+  <div class="app-container" style="overflow: auto">
     <el-card class="!border-none" shadow="never">
       <el-alert
           type="warning"
@@ -8,7 +8,7 @@
           show-icon
       />
     </el-card>
-    <el-form ref="formRef" :model="form" :rules="rules"  label-width="160px">
+    <el-form ref="formRef" :model="form" :rules="rules" label-width="160px">
       <el-card class="!border-none" shadow="never">
         <div class="font-medium mb-7">微信公众号</div>
         <el-form-item label="公众号名称" prop="name">
@@ -54,7 +54,7 @@
 
       <el-divider border-style="dashed" />
 
-      <el-card class="!border-none " shadow="never">
+      <el-card class="!border-none " shadow="never" >
         <div class="font-medium mb-7">服务器配置</div>
         <el-form-item label="URL">
           <div>
@@ -75,7 +75,7 @@
               <el-input v-model="form.token" placeholder="请输入token" />
             </div>
             <div class="form-tips">
-              登录微信公众平台，点击开发>基本配置>服务器配置，设置令牌Token。不填默认为“likeshop”
+              登录微信公众平台，点击开发>基本配置>服务器配置，设置令牌Token。
             </div>
           </div>
         </el-form-item>
@@ -243,3 +243,8 @@ function copyData(text) {
 
 getDataDetail();
 </script>
+<style lang="scss" scoped>
+.el-card{
+  min-width: 700px;
+}
+</style>
