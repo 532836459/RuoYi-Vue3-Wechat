@@ -10,7 +10,7 @@
     </el-card>
     <el-form ref="formRef" :model="form" :rules="rules" label-width="160px">
       <el-card class="!border-none " shadow="never">
-        <div class="font-medium ">微信小程序</div>
+        <div class="font-medium mb-7">微信小程序</div>
         <el-form-item label="小程序名称" prop="name">
           <div class="w-80">
             <el-input v-model="form.name" placeholder="请输入小程序名称" />
@@ -135,7 +135,7 @@
         </el-form-item>
       </el-card>
       <el-divider border-style="dashed" />
-      
+
       <el-card class="!border-none " shadow="never">
         <div class="font-medium ">业务域名</div>
         <el-form-item label="业务域名" prop="businessDomain">
