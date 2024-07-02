@@ -107,7 +107,7 @@
           <el-form-item>
             <el-card shadow="hover" style="width: 100%;padding: 10px;min-height: 95px;">
               <el-alert title="注意：只能选择一个分类下的链接" type="info" show-icon :closable="false" style="margin-bottom: 10px;"/>
-              <el-cascader @change="changeData" style="width: 250px" collapse-tags :props="props" v-model="selectData" :options="categoryOptions" placeholder="请选择内部链接" />
+              <el-cascader style="width: 250px" collapse-tags :props="props" v-model="selectData" :options="categoryOptions" placeholder="请选择内部链接" />
             </el-card>
           </el-form-item>
         </template>
@@ -159,52 +159,6 @@ const title = ref("");
 const categoryOptions = ref([])
 const selectData = ref();
 const customData = ref();
-const options = [
-  {
-    value: 'articleCategory',
-    label: '文章分类',
-    children: [
-      {
-        value: 'disciplines',
-        label: 'Disciplines',
-        children: [
-          {
-            value: 'consistency',
-            label: 'Consistency',
-          },
-          {
-            value: 'feedback',
-            label: 'Feedback',
-          }
-        ],
-      },
-      {
-        value: 'navigation',
-        label: 'Navigation',
-        children: [
-          {
-            value: 'side nav',
-            label: 'Side Navigation',
-          },
-          {
-            value: 'top nav',
-            label: 'Top Navigation',
-          },
-        ],
-      },
-    ],
-  },
-  {
-    value: 'siteCategory',
-    label: '站点分类',
-    children: [
-      {
-        value: 'axure',
-        label: 'Axure Components',
-      }
-    ],
-  },
-]
 const data = reactive({
   form: {},
   queryParams: {
@@ -281,7 +235,7 @@ function resetQuery() {
 // 多选框选中数据
 function handleSelectionChange(selection) {
   ids.value = selection.map(item => item.id);
-  single.value = selection.length != 1;
+  single.value = selection.length !== 1;
   multiple.value = !selection.length;
 }
 
@@ -317,7 +271,12 @@ function submitForm() {
     if (valid) {
       const menuConfig = {};
       if (form.value.menuConfigSelect === '0') {
+        let categoryList = selectData.value.map(item => {
+          return item[0];
+        });
+        categoryList = Array.from(new Set(categoryList));
         menuConfig.data = selectData.value;
+        menuConfig.categoryList = categoryList;
       } else if (form.value.menuConfigSelect === '1') {
         menuConfig.data = customData.value;
       }
