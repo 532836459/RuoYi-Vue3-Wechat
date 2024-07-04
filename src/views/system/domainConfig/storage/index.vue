@@ -28,7 +28,7 @@
       <el-form ref="domainConfigRef" :model="form" :rules="rules" label-width="150px">
         <el-form-item label="存储方式" prop="name">
           <div>
-            <el-radio model-value>{{ getStorageInfo?.name }} </el-radio>
+            <el-radio>{{ getStorageInfo?.name }} </el-radio>
             <div class="form-tips">{{ getStorageInfo?.tips }}</div>
           </div>
         </el-form-item>
