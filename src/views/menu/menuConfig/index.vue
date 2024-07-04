@@ -62,9 +62,6 @@
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="菜单名称" align="center" prop="name" />
       <el-table-column label="菜单图标" align="center" prop="icon" />
-      <el-table-column label="别名(路径)" align="center" prop="alias" />
-      <el-table-column label="SEO关键字" align="center" prop="keywords" />
-      <el-table-column label="SEO描述" align="center" prop="description" />
       <el-table-column label="菜单排序" align="center" prop="sort" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template #default="scope">
@@ -92,45 +89,37 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="别名" prop="alias">
-              <el-input v-model="form.alias" placeholder="请输入菜单路径别名" />
+            <el-form-item label="菜单排序" prop="sort">
+              <el-input-number v-model="form.sort" :min="1"/>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-form-item label="链接配置" prop="menuConfig">
+        <el-form-item label="链接配置" prop="menuConfigSelect">
           <el-radio-group v-model="form.menuConfigSelect">
             <el-radio label="0" size="large" border>内部链接</el-radio>
             <el-radio label="1" size="large" border>自定义链接</el-radio>
           </el-radio-group>
         </el-form-item>
         <template v-if="form.menuConfigSelect === '0'">
-          <el-form-item>
+          <el-form-item prop="selectData">
             <el-card shadow="hover" style="width: 100%;padding: 10px;min-height: 95px;">
               <el-alert title="注意：只能选择一个分类下的链接" type="info" show-icon :closable="false" style="margin-bottom: 10px;"/>
-              <el-cascader style="width: 250px" collapse-tags :props="props" v-model="selectData" :options="categoryOptions" placeholder="请选择内部链接" />
+              <el-cascader style="width: 250px" collapse-tags :props="props" v-model="form.selectData" :options="categoryOptions" placeholder="请选择内部链接" />
             </el-card>
           </el-form-item>
         </template>
         <template v-if="form.menuConfigSelect === '1'">
-          <el-form-item>
+          <el-form-item prop="customData">
             <el-card shadow="hover" style="width: 100%;padding: 10px;min-height: 95px;">
               <div style="display: flex">
-              <el-input v-model="customData" placeholder="请输入域名" clearable/></div>
+              <el-input v-model="form.customData" placeholder="请输入自定义链接" clearable/></div>
             </el-card>
           </el-form-item>
         </template>
         <el-form-item label="菜单图标" prop="icon">
           <image-upload v-model="form.icon" :limit="1" :isShowTip="false"/>
         </el-form-item>
-        <el-form-item label="SEO关键字" prop="keywords">
-          <el-input v-model="form.keywords" placeholder="请输入SEO关键字" />
-        </el-form-item>
-        <el-form-item label="SEO描述" prop="description">
-          <el-input v-model="form.description" placeholder="请输入SEO描述" />
-        </el-form-item>
-        <el-form-item label="菜单排序" prop="sort">
-          <el-input-number v-model="form.sort" :min="1"/>
-        </el-form-item>
+
       </el-form>
       <template #footer>
         <div class="dialog-footer">
@@ -157,8 +146,6 @@ const multiple = ref(true);
 const total = ref(0);
 const title = ref("");
 const categoryOptions = ref([])
-const selectData = ref();
-const customData = ref();
 const data = reactive({
   form: {},
   queryParams: {
@@ -166,8 +153,6 @@ const data = reactive({
     pageSize: 10,
     name: null,
     icon: null,
-    keywords: null,
-    description: null,
     sort: null,
     orderByColumn: 'sort',
     isAsc: 'desc'
@@ -176,8 +161,14 @@ const data = reactive({
     name: [
       { required: true, message: "菜单名称不能为空", trigger: "blur" }
     ],
-    alias: [
-      { required: true, message: "别名(uri路径)不能为空", trigger: "blur" }
+    menuConfigSelect: [
+      { required: true, message: "菜单名称不能为空", trigger: "blur" }
+    ],
+    selectData: [
+      { required: true, message: "请选择内部链接", trigger: "blur" }
+    ],
+    customData: [
+      { required: true, message: "自定义链接不能为空", trigger: "blur" }
     ],
   }
 });
@@ -207,16 +198,13 @@ function reset() {
     id: null,
     name: null,
     icon: null,
-    alias: null,
     menuConfig: null,
-    keywords: null,
-    description: null,
     sort: null,
     createTime: null,
-    updateTime: null
+    updateTime: null,
+    selectData: null,
+    customData: null
   };
-  selectData.value = null;
-  customData.value = null;
   proxy.resetForm("menuConfigRef");
 }
 
@@ -243,6 +231,7 @@ function handleSelectionChange(selection) {
 function handleAdd() {
   reset();
   form.value.menuConfigSelect = '0';
+  form.value.sort = '1';
   open.value = true;
   title.value = "添加菜单配置";
 }
@@ -256,9 +245,9 @@ function handleUpdate(row) {
     const configJson = JSON.parse(form.value.menuConfig)
     form.value.menuConfigSelect = configJson.menuConfigSelect;
     if (form.value.menuConfigSelect === '0') {
-      selectData.value = configJson.data;
+      form.value.selectData = configJson.data;
     }else {
-      customData.value = configJson.data;
+      form.value.customData = configJson.data;
     }
     open.value = true;
     title.value = "修改菜单配置";
@@ -271,14 +260,14 @@ function submitForm() {
     if (valid) {
       const menuConfig = {};
       if (form.value.menuConfigSelect === '0') {
-        let categoryList = selectData.value.map(item => {
+        let categoryList = form.value.selectData.map(item => {
           return item[0];
         });
         categoryList = Array.from(new Set(categoryList));
-        menuConfig.data = selectData.value;
+        menuConfig.data = form.value.selectData;
         menuConfig.categoryList = categoryList;
       } else if (form.value.menuConfigSelect === '1') {
-        menuConfig.data = customData.value;
+        menuConfig.data = form.value.customData;
       }
       menuConfig.menuConfigSelect = form.value.menuConfigSelect;
       form.value.menuConfig = JSON.stringify(menuConfig);
