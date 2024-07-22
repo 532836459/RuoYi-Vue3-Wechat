@@ -197,8 +197,8 @@ function reset() {
     title: null,
     color: null,
     content: null,
-    view: null,
-    commonStatus: null,
+    view: 1,
+    commonStatus: "1",
     createBy: null,
     createTime: null,
     updateTime: null
@@ -248,6 +248,9 @@ function submitForm() {
   proxy.$refs["noticeRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
+        if (form.value.color === null) {
+          form.value.color = '';
+        }
         updateNotice(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功");
           open.value = false;
