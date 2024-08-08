@@ -72,8 +72,8 @@
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="标题" align="center" prop="title" />
-      <el-table-column label="描述" align="center" prop="desc" />
-      <el-table-column label="链接" align="center" prop="url" />
+      <el-table-column label="描述" align="center" prop="desc" show-overflow-tooltip/>
+      <el-table-column label="链接" align="center" prop="url" show-overflow-tooltip/>
       <el-table-column label="logo图" align="center" prop="logo" width="100">
         <template #default="scope">
           <image-preview :src="scope.row.logo" :width="50" :height="50"/>

@@ -72,7 +72,7 @@
       <el-table-column label="id" align="center" prop="id" />
       <el-table-column label="文章标题" align="center" prop="title" />
       <el-table-column label="标题颜色" align="center" prop="color" />
-      <el-table-column label="内容" align="center" prop="content" />
+      <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip/>
       <el-table-column label="浏览量" align="center" prop="view" />
       <el-table-column label="状态" align="center" prop="commonStatus">
         <template #default="scope">
