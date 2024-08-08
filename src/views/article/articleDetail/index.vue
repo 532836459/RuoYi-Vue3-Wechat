@@ -339,7 +339,7 @@ function handleUpdate(row) {
   const _id = row.id || ids.value
   getArticleDetail(_id).then(response => {
     form.value = response.data;
-    if (form.value.downloadAddr !== null && form.value.downloadAddr.length > 0) {
+    if (form.value.downloadAddr !== null && form.value.downloadAddr !== undefined && form.value.downloadAddr.length > 0) {
       let downloadJsonArray = JSON.parse(form.value.downloadAddr);
       for (let key in downloadJsonArray) {
         let downJson = downloadJsonArray[key];
@@ -357,8 +357,8 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["articleDetailRef"].validate(valid => {
     if (valid) {
-      if (form.value.downType !== undefined && form.value.downType.length > 0
-          && form.value.download !== undefined && form.value.download.length >0) {
+      if (form.value.downType !== null && form.value.downType !== undefined && form.value.downType.length > 0
+          && form.value.download !== null && form.value.download !== undefined && form.value.download.length >0) {
           let jsonArray = [];
           jsonArray.push({ type: form.value.downType, download: form.value.download });
           form.value.downloadAddr = JSON.stringify(jsonArray);
